@@ -8,9 +8,9 @@ import { Card, CardContent } from '@/components/ui/Card'
 interface StatCardProps {
   title: string
   value: string | number
-  change?: string
+  change?: string | { value: number; isPositive?: boolean }
   changeType?: 'positive' | 'negative' | 'neutral'
-  icon: LucideIcon
+  icon: any
   color?: 'purple' | 'blue' | 'green' | 'orange' | 'red'
   chart?: React.ReactNode
 }
@@ -23,7 +23,7 @@ const colorClasses = {
   red: { bg: 'bg-red-50', icon: 'text-red-600', gradient: 'from-red-500 to-red-600' },
 }
 
-export default function StatCard({ 
+export function StatCard({ 
   title, 
   value, 
   change, 
@@ -32,39 +32,44 @@ export default function StatCard({
   color = 'purple',
   chart
 }: StatCardProps) {
-  const colors = colorClasses[color]
+  const colors = { bg: 'bg-purple-100', icon: 'text-purple-700' };
+
+  const displayChange = typeof change === 'object' 
+    ? `${change.isPositive ? '+' : '-'}${change.value}%` 
+    : change;
+
+  const isPos = typeof change === 'object' ? change.isPositive : changeType === 'positive';
+  const isNeg = typeof change === 'object' ? !change.isPositive : changeType === 'negative';
 
   return (
     <Card hover>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-500 mb-1">{title}</p>
-            <p className="text-3xl font-bold text-gray-900">{value}</p>
+            <p className="text-xs font-semibold text-gray-600 mb-1">{title}</p>
+            <p className="text-2xl font-semibold text-black">{value}</p>
             {change && (
-              <div className="flex items-center gap-1 mt-2">
-                {changeType === 'positive' && <TrendingUp size={16} className="text-green-600" />}
-                {changeType === 'negative' && <TrendingDown size={16} className="text-red-600" />}
-                <p className={`text-sm font-medium ${
-                  changeType === 'positive' ? 'text-green-600' : 
-                  changeType === 'negative' ? 'text-red-600' : 
-                  'text-gray-500'
-                }`}>
-                  {change}
-                </p>
+              <div className="flex items-center gap-1 mt-1">
+                {isPos && <TrendingUp size={14} className="text-purple-700" />}
+                {isNeg && <TrendingDown size={14} className="text-black" />}
+                <p className="text-xs font-semibold text-purple-700">
+                  {displayChange}
+                </p>   
               </div>
             )}
           </div>
-          <div className={`w-14 h-14 ${colors.bg} rounded-2xl flex items-center justify-center flex-shrink-0`}>
-            <Icon className={`w-7 h-7 ${colors.icon}`} />
-          </div>
+          <div className="w-12 h-12 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
+            {React.isValidElement(Icon) ? Icon : typeof Icon === 'function' ? <Icon className="w-6 h-6 text-purple-700" /> : null}
+          </div>  
         </div>
         {chart && (
-          <div className="mt-4 h-16">
+          <div className="mt-2 h-12">
             {chart}
           </div>
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
+
+export default StatCard;

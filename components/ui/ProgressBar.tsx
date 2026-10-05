@@ -15,11 +15,11 @@ interface ProgressBarProps {
 }
 
 const colorClasses = {
-  purple: 'bg-[#7C3AED]',
-  blue: 'bg-blue-500',
-  green: 'bg-green-500',
-  orange: 'bg-orange-500',
-  red: 'bg-red-500',
+  purple: 'bg-purple-700',
+  blue: 'bg-purple-800',
+  green: 'bg-purple-600',
+  orange: 'bg-black',
+  red: 'bg-black',
 };
 
 const sizeClasses = {
@@ -43,16 +43,16 @@ export const ProgressBar = ({
     <div className={cn('w-full', className)}>
       {(label || showLabel) && (
         <div className="flex items-center justify-between mb-2">
-          {label && <span className="text-sm font-medium text-gray-700">{label}</span>}
-          {showLabel && <span className="text-sm text-gray-500">{percentage.toFixed(0)}%</span>}
+          {label && <span className="text-sm font-semibold text-black">{label}</span>}
+          {showLabel && <span className="text-sm font-semibold text-purple-700">{percentage.toFixed(0)}%</span>}
         </div>
       )}
-      <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', sizeClasses[size])}>
+      <div className={cn('w-full bg-purple-100 rounded-md overflow-hidden', sizeClasses[size])}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className={cn('h-full rounded-full', colorClasses[color])}
+          className={cn('h-full rounded-md', colorClasses[color])}
         />
       </div>
     </div>

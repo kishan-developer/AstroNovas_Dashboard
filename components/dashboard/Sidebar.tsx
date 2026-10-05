@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   ChevronLeft,
   ChevronRight,
   User,
@@ -59,7 +60,7 @@ const iconMap: Record<string, React.ReactNode> = {
   User: <User size={20} />,
 };
 
-export const Sidebar = ({ 
+export const Sidebar = ({
   role = 'admin',
   isOpen = false,
   onClose,
@@ -69,14 +70,37 @@ export const Sidebar = ({
   onCollapseChange
 }: SidebarProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    // Auto-expand menus that contain the active pathname
+    const newExpanded = new Set<string>();
+    navigation.forEach(item => {
+      if (item.children?.some(child => pathname === child.href || pathname.startsWith(child.href))) {
+        newExpanded.add(item.href);
+      }
+    });
+    setExpandedItems(prev => new Set([...Array.from(prev), ...Array.from(newExpanded)]));
+  }, [pathname, navigation]);
 
   const handleCollapseToggle = () => {
     const newCollapsed = !isCollapsed;
     setIsCollapsed(newCollapsed);
     onCollapseChange?.(newCollapsed);
+  };
+
+  // Dynamically resolve student ID from current route (e.g. /student/STU-1001/dashboard -> STU-1001)
+  const studentMatch = pathname.match(/^\/student\/([^\/]+)/);
+  const activeStudentId = studentMatch ? studentMatch[1] : '1';
+
+  const getResolvedHref = (href: string) => {
+    if (href.startsWith('/student/1/')) {
+      return href.replace('/student/1/', `/student/${activeStudentId}/`);
+    }
+    return href;
   };
 
   const toggleExpanded = (href: string) => {
@@ -89,44 +113,36 @@ export const Sidebar = ({
     setExpandedItems(newExpanded);
   };
 
-  const handleNavigate = (href: string) => {
-    router.push(href);
-    onNavigate?.(href);
-  };
-
   const isExpanded = isCollapsed && isHovered;
 
   return (
-    <motion.aside
-      initial={{ width: 280 }}
-      animate={{ width: isExpanded ? 280 : isCollapsed ? 80 : 280 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+    <aside
+      className={cn(
+        'fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-50 flex flex-col lg:translate-x-0 -translate-x-full lg:block hidden transition-all duration-300',
+        isExpanded ? 'w-[280px]' : isCollapsed ? 'w-[80px]' : 'w-[280px]'
+      )}
       onMouseEnter={() => isCollapsed && setIsHovered(true)}
       onMouseLeave={() => isCollapsed && setIsHovered(false)}
-      className="fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-50 flex flex-col lg:translate-x-0 -translate-x-full lg:block hidden"
     >
       {/* Logo Section */}
-      <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100">
-        <AnimatePresence mode="wait">
-          {(!isCollapsed || isExpanded) && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center gap-3"
-            >
-              <div className="w-10 h-10 bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
-              <span className="font-bold text-xl text-gray-900">AstroNovas</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
+      <div className={cn(
+        "h-20 flex items-center border-b border-gray-100",
+        (!isCollapsed || isExpanded) ? "justify-between px-5" : "justify-center px-2"
+      )}>
+        {(!isCollapsed || isExpanded) && (
+          <div className="flex items-center gap-0 min-w-0">
+            <img src="/main_logo.png" alt="AstroNovas logo" className="w-22 p-0 m-0 h-19 shrink-0" />
+            <div className="flex flex-col leading-tight min-w-0">
+              
+              <span className="text-[15px] font-bold text-gray-900 truncate">AstrroNovas</span>
+              <span className="text-[10px] font-medium text-gray-500 truncate">School of Mmystiics</span>
+            </div>
+          </div>
+        )}
+
         <button
           onClick={handleCollapseToggle}
-          className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="p-2 rounded-md hover:bg-purple-50 transition-colors text-black"
         >
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -135,91 +151,103 @@ export const Sidebar = ({
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-6 px-3">
         <ul className="space-y-1">
-          {navigation?.map((item) => (
-            <li key={item.href}>
-              <div>
-                <motion.button
-                  onClick={() => item.children ? toggleExpanded(item.href) : handleNavigate(item.href)}
-                  className={cn(
-                    'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200',
-                    'hover:bg-gray-50',
-                    activeItem === item.title
-                      ? 'bg-[#F5F3FF] text-[#7C3AED] font-medium'
-                      : 'text-gray-600'
-                  )}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="flex-shrink-0">
-                    {item.icon ? iconMap[item.icon] || <LayoutDashboard size={20} /> : <LayoutDashboard size={20} />}
-                  </span>
-                  <AnimatePresence mode="wait">
-                    {(!isCollapsed || isExpanded) && (
-                      <motion.span
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex-1 text-left flex items-center justify-between"
-                      >
-                        <span>{item.title}</span>
-                        {item.badge && (
-                          <span className="bg-[#7C3AED] text-white text-xs px-2 py-0.5 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                        {item.children && (
-                          <ChevronDown 
-                            size={16} 
+          {navigation?.map((item) => {
+            const resolvedItemHref = getResolvedHref(item.href); 
+            const isItemActive = activeItem === item.title || pathname === resolvedItemHref || (resolvedItemHref !== '/admin' && pathname.startsWith(resolvedItemHref));
+
+            return (
+              <li key={item.href}>
+                <div>
+                  {item.children ? (
+                    <button
+                      onClick={() => toggleExpanded(item.href)}
+                      className={cn(
+                        'w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200 text-left',
+                        'hover:bg-purple-50',
+                        isItemActive
+                          ? 'bg-purple-50 text-purple-700 font-semibold'
+                          : 'text-gray-700'
+                      )}
+                    >
+                      <span className="flex-shrink-0">
+                        {item.icon ? iconMap[item.icon] || <LayoutDashboard size={20} /> : <LayoutDashboard size={20} />}
+                      </span>
+                      {(!isCollapsed || isExpanded) && (
+                        <span className="flex-1 flex items-center justify-between font-semibold text-sm">
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <span className="bg-purple-700 text-white text-xs px-2 py-0.5 rounded-md">
+                              {item.badge}
+                            </span>
+                          )}
+                          <ChevronDown
+                            size={16}
                             className={cn(
                               'transition-transform duration-200',
                               expandedItems.has(item.href) ? 'rotate-180' : ''
                             )}
                           />
-                        )}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                  {activeItem === item.title && !isCollapsed && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute left-0 w-1 h-8 bg-[#7C3AED] rounded-r-full"
-                      initial={false}
-                    />
+                        </span>
+                      )}
+                    </button>
+                  ) : (
+                    <Link
+                      href={resolvedItemHref}
+                      className={cn(
+                        'w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all duration-200 relative',
+                        'hover:bg-purple-50',
+                        isItemActive
+                          ? 'bg-purple-50 text-purple-700 font-semibold'
+                          : 'text-gray-700'
+                      )}
+                    >
+                      <span className="flex-shrink-0">
+                        {item.icon ? iconMap[item.icon] || <LayoutDashboard size={20} /> : <LayoutDashboard size={20} />}
+                      </span>
+                      {(!isCollapsed || isExpanded) && (
+                        <span className="flex-1 flex items-center justify-between font-semibold text-sm">
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <span className="bg-purple-700 text-white text-xs px-2 py-0.5 rounded-md">
+                              {item.badge}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                      {isItemActive && !isCollapsed && (
+                        <div className="absolute left-0 w-1 h-8 bg-purple-700 rounded-r-md" />
+                      )}
+                    </Link>
                   )}
-                </motion.button>
-                
-                {/* Submenu */}
-                {item.children && expandedItems.has(item.href) && (!isCollapsed || isExpanded) && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="ml-8 mt-1 space-y-1"
-                  >
-                    {item.children.map((child) => (
-                      <motion.button
-                        key={child.href}
-                        onClick={() => handleNavigate(child.href)}
-                        className={cn(
-                          'w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 text-sm',
-                          'hover:bg-gray-50',
-                          activeItem === child.title
-                            ? 'bg-[#F5F3FF] text-[#7C3AED] font-medium'
-                            : 'text-gray-600'
-                        )}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <span>{child.title}</span>
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
-              </div>
-            </li>
-          ))}
+
+                  {/* Submenu */}
+                  {item.children && expandedItems.has(item.href) && (!isCollapsed || isExpanded) && (
+                    <div className="ml-8 mt-1 space-y-1">
+                      {item.children.map((child) => {
+                        const resolvedChildHref = getResolvedHref(child.href);
+                        const isChildActive = activeItem === child.title || pathname === resolvedChildHref;
+                        return (
+                          <Link
+                            key={child.href}
+                            href={resolvedChildHref}
+                            className={cn(
+                              'w-full flex items-center gap-3 px-4 py-2 rounded-md transition-all duration-200 text-sm font-semibold block',
+                              'hover:bg-purple-50',
+                              isChildActive
+                                ? 'bg-purple-50 text-purple-700 font-semibold'
+                                : 'text-gray-700'
+                            )}
+                          >
+                            <span>{child.title}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
@@ -258,6 +286,6 @@ export const Sidebar = ({
           )}
         </AnimatePresence>
       </div>
-    </motion.aside>
+    </aside>
   );
 };

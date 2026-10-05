@@ -36,46 +36,24 @@ export const Navbar = ({
   const [showProfile, setShowProfile] = useState(false);
 
   return (
-    <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
+    <header
       className={`fixed top-0 right-0 left-0 h-20 bg-white border-b border-gray-200 z-40 transition-all duration-300 ${
-        sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+        sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'
       }`}
     >
-      <div className="h-full flex items-center justify-between px-6">
+      <div className="h-full flex items-center justify-between px-4">
         {/* Left Section - Breadcrumb & Title */}
         <div className="flex items-center gap-4">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-md hover:bg-purple-50 transition-colors text-black"
           >
             <Menu size={24} />
           </button>
-          
-          {/* <div>
-            <nav className="flex items-center gap-2 text-sm text-gray-500 mb-1">
-              {breadcrumb.map((item, index) => (
-                <React.Fragment key={item}>
-                  <span className={cn(
-                    'hover:text-[#7C3AED] cursor-pointer transition-colors',
-                    index === breadcrumb.length - 1 && 'text-gray-900 font-medium'
-                  )}>
-                    {item}
-                  </span>
-                  {index < breadcrumb.length - 1 && (
-                    <span className="text-gray-300">/</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </nav>
-            <h1 className="text-2xl font-bold text-gray-900">{title}..</h1>
-          </div> */}
         </div>
 
         {/* Center Section - Search */}
-        <div className="hidden md:flex flex-1 max-w-xl mx-8">
+        <div className="hidden md:flex flex-1 max-w-xl mx-4">
           <div className="relative w-full">
             <Search 
               size={20} 
@@ -84,82 +62,23 @@ export const Navbar = ({
             <input
               type="text"
               placeholder="Search anything..."
-              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent transition-all"
+              className="w-full pl-12 pr-4 py-2 rounded-md border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-700 focus:border-transparent transition-all text-sm font-normal text-black"
             />
           </div>
         </div>
 
         {/* Right Section - Actions */}
-        <div className="flex items-center gap-3">
-          {/* Dark Mode Toggle */}
-          {/* <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-3 rounded-xl hover:bg-gray-100 transition-colors"
-          >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </motion.button> */}
-
-          {/* Language Selector */}
-          {/* <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden sm:flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-gray-100 transition-colors"
-          >
-            <Globe size={20} />
-            <span className="text-sm font-medium">EN</span>
-          </motion.button> */}
- 
-          {/* Messages */}
-          <div className="relative">
-            {/* <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowMessages(!showMessages)}
-              className="p-3 rounded-xl hover:bg-gray-100 transition-colors relative"
-            >
-              <MessageSquare size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-[#7C3AED] rounded-full" />
-            </motion.button>
-             */}
-            <AnimatePresence>
-              {showMessages && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-14 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-3">Messages</h3>
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] rounded-full flex items-center justify-center flex-shrink-0">
-                          <User size={16} className="text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-gray-900 truncate">User {i}</p>
-                          <p className="text-xs text-gray-500 truncate">New message from user {i}...</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
+        <div className="flex items-center gap-2">
           {/* Notifications */}
           <div className="relative">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-3 rounded-xl hover:bg-gray-100 transition-colors relative"
+              className="p-2 rounded-md hover:bg-purple-50 transition-colors relative text-black"
             >
               <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-purple-700 rounded-md" />
             </motion.button>
             
             <AnimatePresence>
@@ -168,16 +87,16 @@ export const Navbar = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-14 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-50"
+                  className="absolute right-0 top-12 w-80 bg-white rounded-md shadow-lg border border-gray-200 p-4 z-50"
                 >
-                  <h3 className="font-semibold text-gray-900 mb-3">Notifications</h3>
+                  <h3 className="font-semibold text-black mb-3">Notifications</h3>
                   <div className="space-y-3">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
-                        <div className="w-2 h-2 bg-[#7C3AED] rounded-full mt-2 flex-shrink-0" />
+                      <div key={i} className="flex items-start gap-3 p-2 rounded-md hover:bg-purple-50 cursor-pointer transition-colors">
+                        <div className="w-2 h-2 bg-purple-700 rounded-md mt-2 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-gray-900">Notification {i}</p>
-                          <p className="text-xs text-gray-500">2 minutes ago</p>
+                          <p className="font-semibold text-sm text-black">Notification {i}</p>
+                          <p className="text-xs text-gray-500 font-normal">2 minutes ago</p>
                         </div>
                       </div>
                     ))}
@@ -190,15 +109,15 @@ export const Navbar = ({
           {/* Profile */}
           <div className="relative">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => setShowProfile(!showProfile)}
-              className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-2 p-2 rounded-md hover:bg-purple-50 transition-colors"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] rounded-full flex items-center justify-center">
-                <User size={18} className="text-white" />
+              <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center">
+                <User size={16} className="text-white" />
               </div>
-              <ChevronDown size={16} className="text-gray-400" />
+              <ChevronDown size={16} className="text-gray-600" />
             </motion.button>
             
             <AnimatePresence>
@@ -207,24 +126,24 @@ export const Navbar = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-14 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-50"
+                  className="absolute right-0 top-12 w-56 bg-white rounded-md shadow-lg border border-gray-200 p-2 z-50"
                 >
                   <div className="p-3 border-b border-gray-100">
-                    <p className="font-semibold text-gray-900">Kishan Kumar Ray</p>
-                    <p className="text-sm text-gray-500">kishan@example.com</p>
+                    <p className="font-semibold text-black">Kishan Kumar Ray</p>
+                    <p className="text-xs text-gray-500 font-normal">kishan@example.com</p>
                   </div>
                   <div className="py-2">
                     {['Profile', 'Settings', 'Billing'].map((item) => (
                       <button
                         key={item}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                        className="w-full text-left px-3 py-2 text-sm font-semibold text-black hover:bg-purple-50 rounded-md transition-colors"
                       >
                         {item}
                       </button>
                     ))}
                   </div>
                   <div className="pt-2 border-t border-gray-100">
-                    <button className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <button className="w-full text-left px-3 py-2 text-sm font-semibold text-purple-700 hover:bg-purple-50 rounded-md transition-colors">
                       Sign Out
                     </button>
                   </div>
@@ -234,6 +153,6 @@ export const Navbar = ({
           </div>
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 };

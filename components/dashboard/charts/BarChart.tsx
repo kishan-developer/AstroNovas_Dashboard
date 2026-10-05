@@ -16,8 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 interface BarChartProps {
   data: any[];
   title?: string;
-  dataKey: string;
-  xAxisKey: string;
+  dataKey?: string;
+  xAxisKey?: string;
   color?: string;
   height?: number;
 }
@@ -25,8 +25,8 @@ interface BarChartProps {
 export const BarChart = ({
   data,
   title,
-  dataKey,
-  xAxisKey,
+  dataKey = 'value',
+  xAxisKey = 'name',
   color = '#7C3AED',
   height = 300,
 }: BarChartProps) => {

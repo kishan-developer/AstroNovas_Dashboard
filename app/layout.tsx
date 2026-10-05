@@ -16,9 +16,11 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "AstroNovas Dashboard",
-  description: "Premium Admin Dashboard for AstroNovas",
+ title: "AstrroNovas School of Mmystiics",
+  description: "Premium Admin Dashboard for AstrroNovas",
 };
+
+import ReduxProvider from "@/lib/redux/ReduxProvider";
 
 export default function RootLayout({
   children,
@@ -28,10 +30,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${montserrat.variable} font-sans`}>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ReduxProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
 }
+

@@ -6,16 +6,18 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   hover?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ children, className, hover = true }, ref) => {
+  ({ children, className, hover = true, onClick }, ref) => {
     return (
       <motion.div
         ref={ref}
+        onClick={onClick}
         className={cn(
-          'bg-white rounded-2xl shadow-md border border-gray-100 p-6',
-          hover && 'hover:shadow-lg transition-shadow duration-200',
+          'bg-white rounded-md shadow-sm border border-gray-200 p-4',
+          hover && 'hover:shadow-md transition-shadow duration-200',
           className
         )}
         whileHover={hover ? { y: -2 } : {}}
@@ -27,11 +29,11 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
 );
 
 Card.displayName = 'Card';
-
+ 
 export const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  >(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn('flex flex-col space-y-1.5 mb-4', className)}
@@ -88,3 +90,5 @@ export const CardFooter = React.forwardRef<
 ));
 
 CardFooter.displayName = 'CardFooter';
+
+
